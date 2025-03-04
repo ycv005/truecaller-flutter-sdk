@@ -28,4 +28,4 @@
   ~ PRODUCT YOU ARE ASSUMING THE ENTIRE RISK AS TO ITS QUALITY AND PERFORMANCE.
   -->
 
-<manifest package="com.truecallersdk" />
+<manifest  xmlns:android="http://schemas.android.com/apk/res/android" />
