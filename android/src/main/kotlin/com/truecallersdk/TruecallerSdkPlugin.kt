@@ -98,10 +98,6 @@ public class TruecallerSdkPlugin : FlutterPlugin, MethodCallHandler, EventChanne
         eventChannel?.setStreamHandler(this)
     }
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-        cleanUp()
-    }
-
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             INITIALIZE_SDK -> {
