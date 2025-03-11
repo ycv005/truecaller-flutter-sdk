@@ -55,7 +55,6 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
-import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.util.Locale
 
 const val INITIALIZE_SDK = "initializeSDK"
@@ -91,29 +90,16 @@ public class TruecallerSdkPlugin : FlutterPlugin, MethodCallHandler, EventChanne
         onAttachedToEngine(flutterPluginBinding.binaryMessenger)
     }
 
-    /**This static function is optional and equivalent to onAttachedToEngine. It supports the old
-     * pre-Flutter-1.12 Android projects. You are encouraged to continue supporting
-     * plugin registration via this function while apps migrate to use the new Android APIs
-     * post-flutter-1.12 via https:flutter.dev/go/android-project-migration.
-     * It is encouraged to share logic between onAttachedToEngine and registerWith to keep
-     * them functionally equivalent. Only one of onAttachedToEngine or registerWith will be called
-     * depending on the user's project. onAttachedToEngine or registerWith must both be defined
-     * in the same class.
-     **/
-    companion object {
-        @JvmStatic
-        fun registerWith(registrar: Registrar) {
-            val truecallerSdkPlugin = TruecallerSdkPlugin()
-            truecallerSdkPlugin.activity = registrar.activity()
-            truecallerSdkPlugin.onAttachedToEngine(registrar.messenger())
-        }
-    }
-
     private fun onAttachedToEngine(messenger: BinaryMessenger) {
         methodChannel = MethodChannel(messenger, TC_METHOD_CHANNEL)
         methodChannel?.setMethodCallHandler(this)
+
         eventChannel = EventChannel(messenger, TC_EVENT_CHANNEL)
         eventChannel?.setStreamHandler(this)
+    }
+
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        cleanUp()
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
@@ -389,8 +375,8 @@ public class TruecallerSdkPlugin : FlutterPlugin, MethodCallHandler, EventChanne
         TcSdk.clear()
         activity = null
         methodChannel?.setMethodCallHandler(null)
-        methodChannel = null
         eventChannel?.setStreamHandler(null)
+        methodChannel = null
         eventChannel = null
         eventSink = null
     }
